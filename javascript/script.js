@@ -13,10 +13,23 @@ function get_cdc_data() {
 	return request.responseText
 }
 
-document.getElementById('facts-date').innerText += " " + date_string()
-
 function parse_csv(csv_str) {
-	let rows = csv_str.split("\r\n")
+	let rows = csv_str.split("\r\n").slice(3)
 	return rows.map(function (row) {return row.split(",")})
 }
 
+function create_dropdown_option(name, dropdown) {
+	let el = document.createElement("option")
+	el.textContent = name
+	el.value = name
+	dropdown.appendChild(el)
+}
+
+document.getElementById('facts-date').innerText += " " + date_string()
+
+let cdc_data = get_cdc_data()
+let cdc_data_csv = parse_csv(cdc_data)
+
+let dropdown = document.getElementById("region")
+let options = cdc_data_csv.map(function (x) {return x[2]})
+options.map(function (region) {create_dropdown_option(region, dropdown)})
