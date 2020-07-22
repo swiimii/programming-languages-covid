@@ -14,3 +14,9 @@ function get_cdc_data() {
 }
 
 document.getElementById('facts-date').innerText += " " + date_string()
+
+function parse_csv(csv_str) {
+	let rows = csv_str.split("\r\n")
+	return rows.map(function (row) {return row.split(",")})
+}
+
