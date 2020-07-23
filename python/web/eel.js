@@ -1,0 +1,1 @@
+eel.my_python_method('Hello ', 'World');
