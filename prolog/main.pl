@@ -7,6 +7,8 @@
 %     write([Line1]), nl.
 
 % https://stackoverflow.com/questions/4805601/read-a-file-line-by-line-in-prolog
+consult('data/database').
+
 main :-
     open('data/database.txt', read, Str),
     read_file(Str,Lines),
