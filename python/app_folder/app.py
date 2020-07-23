@@ -1,6 +1,6 @@
 import eel
 
-eel.init('web')
+eel.init('../web')
 eel.start('main.html', block=False)
 
 def print_return(n):
