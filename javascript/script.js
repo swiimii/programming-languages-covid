@@ -25,6 +25,18 @@ function create_dropdown_option(name, dropdown) {
 	dropdown.appendChild(el)
 }
 
+function get_selected_region() {
+	let dropdown = document.getElementById("region")
+	return dropdown.options[dropdown.selectedIndex].value
+}
+
+function update_facts() {
+	let region = get_selected_region()
+	document.getElementById('fact-1').innerText = "You chose " + region
+	document.getElementById('fact-2').innerText = "You chose " + region
+	document.getElementById('fact-3').innerText = "You chose " + region
+}
+
 document.getElementById('facts-date').innerText += " " + date_string()
 
 let cdc_data = get_cdc_data()

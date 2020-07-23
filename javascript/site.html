@@ -12,13 +12,13 @@
 		<h2>Facts and Sources</h2>
 		<p id="facts-date">These facts are up to date as of </p>
 		<label for="region">Select your region</label>
-		<select name="region" id="region">
+		<select name="region" id="region" onchange="update_facts();">
 			<!--This gets filled by JS-->
 		</select>
 		<ul>
-			<li>Fact 1</li>
-			<li>Fact 2</li>
-			<li>Fact 3</li>
+			<li id="fact-1">Fact 1</li>
+			<li id="fact-2">Fact 2</li>
+			<li id="fact-3">Fact 3</li>
 		</ul>
 
 		<h2>COVID-19 Quiz</h2>
