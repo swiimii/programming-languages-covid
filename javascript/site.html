@@ -2,9 +2,28 @@
 
 <html>
 	<head>
-		<script src="script.js"></script>
+		<title>COVID-19 Information</title>
 	</head>
 	<body>
-		COVID-19 is bad and you should wear a mask.
+		<h1>COVID-19 Information</h1>
+		<h2>About This Page</h2>
+		This is where we'll put a mission statement or something.
+
+		<h2>Facts and Sources</h2>
+		<p id="facts-date">These facts are up to date as of </p>
+		<label for="region">Select your region</label>
+		<select name="region" id="region" onchange="update_facts(cdc_data_csv);">
+			<!--This gets filled by JS-->
+		</select>
+		<ul>
+			<li id="fact-1">Fact 1</li>
+			<li id="fact-2">Fact 2</li>
+			<li id="fact-3">Fact 3</li>
+		</ul>
+
+		<h2>COVID-19 Quiz</h2>
+		There will be a link to the quiz here.
+
+		<script src="script.js"></script>
 	</body>
 </html>
