@@ -10,7 +10,7 @@ q_a_pairs = {'1: ' : ['a1', 'a2', 'a3', 'a4'],
 
 @app.route('/')
 def home():
-    return render_template('trial_site.html')
+    return render_template('site.html')
 
 
 @app.route('/quiz')
@@ -27,7 +27,7 @@ def quiz():
 
         key_list.insert(new_pos, key_list.pop(key_list.index(key)))
 
-    return render_template('main.html', questions=key_list, answer_options=q_a_pairs)
+    return render_template('quiz.html', questions=key_list, answer_options=q_a_pairs)
 
 
 @app.route('/quiz', methods=['POST'])
