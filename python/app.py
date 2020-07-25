@@ -1,7 +1,3 @@
-import eel
-
-# eel.init('../web')
-# eel.start('main.html', block=False)
 
 # def print_return(n):
 #     print('returned from js: ', n)
@@ -21,14 +17,25 @@ import eel
 
 # # example of using a callback from the js function to do something in python
 # eel.js_what_yr()(print_return)
+import eel, random
+
+@eel.expose
+def start_quiz():
+    eel.start('trial_site.html', block=True, mode='chrome-app')
+
+# Create Questions
+questions = {
+ 'Taj Mahal':['Agra','New Delhi','Mumbai','Chennai'],
+ 'Great Wall of China':['China','Beijing','Shanghai','Tianjin'],
+ 'Petra':['Ma\'an Governorate','Amman','Zarqa','Jerash']
+}
+
+# Shuffle Question order for fun; NOTE: probs should do manually
+keys = list(questions.keys())
+random.shuffle(keys)
 
 
-# while True:
-#     eel.sleep(10)
 
-def main():
-    eel.init('../web')
-    eel.start('main.html', block=False)
 
-if __name__== '__main__':
-    main()
+eel.init('../javascript')
+eel.start('site.html', block=True, mode='chrome-app')
