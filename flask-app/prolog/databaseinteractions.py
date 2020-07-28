@@ -36,7 +36,7 @@ def GetQuestionAndOptions(questionNumber, databasePath="data/database.pl"):
 '''
 This function returns the one-letter answer to the question number provided to its argument
 '''
-def GetAnswer(questionNumber, databasePath = "data/database.pl"):
+def GetAnswer(questionNumber, databasePath="data/database.pl"):
     prolog = Prolog()
     # Consult database
     prolog.consult(databasePath)
@@ -54,7 +54,7 @@ def GetAnswer(questionNumber, databasePath = "data/database.pl"):
 '''
 This funtion prints all question and answer information in the prolog database to the console.
 '''
-def PrintAllInformation(databasePath = "data/database.pl"):
+def PrintAllInformation(databasePath="data/database.pl"):
     prolog = Prolog()
     # Consult database
     prolog.consult(databasePath)
@@ -93,6 +93,11 @@ def PrintAllInformation(databasePath = "data/database.pl"):
         for option in optionsOut[i]:
             print("\t", option,"\n")
 
-# print(GetQuestionAndOptions(1))
-# print(GetAnswer(1))
-# PrintAllInformation()
+
+def main():
+    print(GetQuestionAndOptions(1))
+    print(GetAnswer(1))
+    # PrintAllInformation()
+
+if __name__ == '__main__':
+    main()
