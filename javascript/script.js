@@ -70,7 +70,7 @@ function update_test_facts(json) {
 	const tests_performed = facts['cumulative_tests_performed']
 	const percent_positive = facts['percent_positive_range']
 
-	if (tests_performed === null) {
+	if (tests_performed === null && percent_positive !== null) {
 		const out = "Unfortunately, this site does not have any data on the COVID-19 tests performed in " + region + "."
 		update_fact('fact-4', out)
 	} else if (tests_performed === null) {
