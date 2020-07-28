@@ -5,10 +5,10 @@ function date_string() {
 	return today.toDateString()
 }
 
-function get_cdc_data() {
+function get_cdc_data(csv_url) {
 	const request = new XMLHttpRequest()
 	// This throws a warning about synchronous requests being deprecated
-	request.open('GET','https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_DATA.csv',false)
+	request.open('GET',csv_url,false)
 	request.send()
 	return request.responseText
 }
@@ -55,9 +55,9 @@ function update_facts(csv) {
 
 document.getElementById('facts-date').innerText += " " + date_string()
 
-const cdc_data = get_cdc_data()
-const cdc_data_csv = parse_csv(cdc_data)
+const case_data = get_cdc_data('https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_DATA.csv')
+const case_data_csv = parse_csv(case_data)
 
 const dropdown = document.getElementById("region")
-const options = cdc_data_csv.map(function (x) {return x[2]})
+const options = case_data_csv.map(function (x) {return x[2]})
 options.map(function (region) {create_dropdown_option(region, dropdown)})
