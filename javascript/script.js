@@ -43,6 +43,10 @@ function get_selected_region() {
 	return dropdown.options[dropdown.selectedIndex].value
 }
 
+function update_fact(id, text) {
+	document.getElementById(id).innerText = text
+}
+
 function update_case_facts(csv) {
 	const region = get_selected_region()
 	const region_row = csv.filter(function (x) {if (x[2] === region) {return true}})[0]
@@ -54,9 +58,9 @@ function update_case_facts(csv) {
 	const cases_7_days = facts[3]
 	const cases_per_100k = facts[4]
 
-	document.getElementById('fact-1').innerText = "Since the start of the pandemic, there have been " + total_cases + " COVID-19 cases in " + region + ". " + total_deaths + " people have died from the disease."
-	document.getElementById('fact-2').innerText = "This means for every 100,000 people in " + region + ", " + cases_per_100k + " people have caught COVID-19, and " + deaths_per_100k + " have died."
-	document.getElementById('fact-3').innerText = "In the last 7 days alone, there have been " + cases_7_days + " cases in " + region + "."
+	update_fact('fact-1', "Since the start of the pandemic, there have been " + total_cases + " COVID-19 cases in " + region + ". " + total_deaths + " people have died from the disease.")
+	update_fact('fact-2', "This means for every 100,000 people in " + region + ", " + cases_per_100k + " people have caught COVID-19, and " + deaths_per_100k + " have died.")
+	update_fact('fact-3', "In the last 7 days alone, there have been " + cases_7_days + " cases in " + region + ".")
 }
 
 function update_test_facts(json) {
@@ -68,13 +72,13 @@ function update_test_facts(json) {
 
 	if (tests_performed === null) {
 		const out = "Unfortunately, this site does not have any data on the COVID-19 tests performed in " + region + "."
-		document.getElementById('fact-4').innerText = out
+		update_fact('fact-4', out)
 	} else if (tests_performed === null) {
 		const out = percent_positive + " of the COVID-19 tests performed in " + region + " have come back positive."
-		document.getElementById('fact-4').innerText = out
+		update_fact('fact-4', out)
 	} else {
 		const out = tests_performed + " COVID-19 tests have been performed in " + region + ". " + percent_positive + " of those tests have come back positive."
-		document.getElementById('fact-4').innerText = out
+		update_fact('fact-4', out)
 	}
 }
 
