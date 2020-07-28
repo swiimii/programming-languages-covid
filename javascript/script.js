@@ -38,7 +38,7 @@ function get_facts(region, csv) {
 	}
 }
 
-function update_facts(csv) {
+function update_case_facts(csv) {
 	const region = get_selected_region()
 	const facts = get_facts(region, csv)
 
@@ -53,10 +53,32 @@ function update_facts(csv) {
 	document.getElementById('fact-3').innerText = "In the last 7 days alone, there have been " + cases_7_days + " cases in " + region + "."
 }
 
+function update_test_facts(json) {
+	const region = get_selected_region()
+	const facts = json.filter(function (x) {if (x['name'] === region) {return true}})[0]
+
+	const tests_performed = facts['cumulative_tests_performed']
+	const percent_positive = facts['percent_positive_range']
+
+	if (tests_performed === null) {
+		const out = "Unfortunately, this site does not have any data on the COVID-19 tests performed in " + region + "."
+		document.getElementById('fact-4').innerText = out
+	} else if (tests_performed === null) {
+		const out = percent_positive + " of the COVID-19 tests performed in " + region + " have come back positive."
+		document.getElementById('fact-4').innerText = out
+	} else {
+		const out = tests_performed + " COVID-19 tests have been performed in " + region + ". " + percent_positive + " of those tests have come back positive."
+		document.getElementById('fact-4').innerText = out
+	}
+}
+
 document.getElementById('facts-date').innerText += " " + date_string()
 
 const case_data = get_file('https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_DATA.csv')
 const case_data_csv = parse_csv(case_data)
+
+const test_data = get_file('https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_TESTING.json')
+const test_data_json = JSON.parse(test_data)['US_MAP_TESTING']
 
 const dropdown = document.getElementById("region")
 const options = case_data_csv.map(function (x) {return x[2]})
