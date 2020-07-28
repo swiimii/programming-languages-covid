@@ -1,12 +1,17 @@
 from flask import Flask, render_template, request
 import datetime
 
+from prolog.databaseinteractions import GetQuestionAndOptions, GetAnswer
+
+
 app = Flask(__name__)
 
 # NOTE: do not include number in question name since we're going to shuffle lol
-q_a_pairs = {'1: ' : ['a1', 'a2', 'a3', 'a4'],
-             '2: ' : ['a1', 'a2', 'a3', 'a4'],
-             '3: ' : ['a1', 'a2', 'a3', 'a4']}
+q_a_pairs = {}
+for question in range(1, 4):
+    prolog_data = GetQuestionAndOptions(question, 'prolog/data/database.pl')
+    q_a_pairs[prolog_data[0]] = prolog_data[1]
+
 
 @app.route('/')
 def home():

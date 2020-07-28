@@ -6,7 +6,7 @@ from pyswip import Prolog, Functor, Variable, Query
 '''
 This function queries the prolog database and returns both a question and its options
 '''
-def GetQuestionAndOptions(questionNumber, databasePath = "data/database.pl"):
+def GetQuestionAndOptions(questionNumber, databasePath="data/database.pl"):
 
     prolog = Prolog()
     # Consult database
