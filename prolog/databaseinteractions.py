@@ -47,7 +47,7 @@ def GetAnswer(questionNumber, databasePath = "data/database.pl"):
     returnValue = ""
     query = Query(answer(questionNumber, out1))
     if(query.nextSolution()):
-        returnValue = out1.value
+        returnValue = str(out1.value)
     query.closeQuery()
     return returnValue
 
