@@ -30,17 +30,10 @@ function get_selected_region() {
 	return dropdown.options[dropdown.selectedIndex].value
 }
 
-function get_facts(region, csv) {
-	if (csv[0][2] === region) {
-		return csv[0].slice(3)
-	} else {
-		return get_facts(region, csv.slice(1))
-	}
-}
-
 function update_case_facts(csv) {
 	const region = get_selected_region()
-	const facts = get_facts(region, csv)
+	const region_row = csv.filter(function (x) {if (x[2] === region) {return true}})[0]
+	const facts = region_row.slice(3)
 
 	const total_cases = facts[0]
 	const total_deaths = facts[1]
