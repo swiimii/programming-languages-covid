@@ -13,8 +13,8 @@ function get_file(url) {
 	return request.responseText
 }
 
-function parse_csv(csv_str) {
-	const rows = csv_str.split("\r\n").slice(3)
+function parse_csv(csv_str, drop=3) {
+	const rows = csv_str.split("\r\n").slice(drop)
 	return rows.map(function (row) {return row.split(",")})
 }
 
