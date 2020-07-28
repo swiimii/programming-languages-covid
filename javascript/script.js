@@ -22,7 +22,7 @@ function get_file(url) {
  */
 function parse_csv(csv_str, drop=3) {
 	const rows = csv_str.split("\r\n").slice(drop)
-	return rows.map(function (row) {return row.split(",")})
+	return rows.map((row) => row.split(","))
 }
 
 /*
@@ -49,7 +49,7 @@ function update_fact(id, text) {
 
 function update_case_facts(csv) {
 	const region = get_selected_region()
-	const region_row = csv.filter(function (x) {if (x[2] === region) {return true}})[0]
+	const region_row = csv.filter((x) => {if (x[2] === region) {return true}})[0]
 	const facts = region_row.slice(3)
 
 	const total_cases = facts[0]
@@ -65,7 +65,7 @@ function update_case_facts(csv) {
 
 function update_test_facts(json) {
 	const region = get_selected_region()
-	const facts = json.filter(function (x) {if (x['name'] === region) {return true}})[0]
+	const facts = json.filter((x) => {if (x['name'] === region) {return true}})[0]
 
 	const tests_performed = facts['cumulative_tests_performed']
 	const percent_positive = facts['percent_positive_range']
@@ -92,5 +92,5 @@ const test_data_json = JSON.parse(test_data)['US_MAP_TESTING']
 
 // Populate the dropdown menu with all the regions provided by the case CSV
 const dropdown = document.getElementById("region")
-const options = case_data_csv.map(function (x) {return x[2]})
-options.map(function (region) {create_dropdown_option(region, dropdown)})
+const options = case_data_csv.map((x) => x[2])
+options.map((region) => create_dropdown_option(region, dropdown))
