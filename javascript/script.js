@@ -5,6 +5,9 @@ function date_string() {
 	return today.toDateString()
 }
 
+/*
+ * Downloads the file at the given URL.
+ */
 function get_file(url) {
 	const request = new XMLHttpRequest()
 	// This throws a warning about synchronous requests being deprecated
@@ -13,11 +16,18 @@ function get_file(url) {
 	return request.responseText
 }
 
+/*
+ * Splits the CSV string grabbed from the CDC website into a list of lists. The
+ * drop argument will drop the first n rows from the return value.
+ */
 function parse_csv(csv_str, drop=3) {
 	const rows = csv_str.split("\r\n").slice(drop)
 	return rows.map(function (row) {return row.split(",")})
 }
 
+/*
+ * Adds name as an option to the given dropdown element.
+ */
 function create_dropdown_option(name, dropdown) {
 	const el = document.createElement("option")
 	el.textContent = name
@@ -25,6 +35,9 @@ function create_dropdown_option(name, dropdown) {
 	dropdown.appendChild(el)
 }
 
+/*
+ * Returns the region currently selected in the dropdown menu.
+ */
 function get_selected_region() {
 	const dropdown = document.getElementById("region")
 	return dropdown.options[dropdown.selectedIndex].value
@@ -73,6 +86,7 @@ const case_data_csv = parse_csv(case_data)
 const test_data = get_file('https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_TESTING.json')
 const test_data_json = JSON.parse(test_data)['US_MAP_TESTING']
 
+// Populate the dropdown menu with all the regions provided by the case CSV
 const dropdown = document.getElementById("region")
 const options = case_data_csv.map(function (x) {return x[2]})
 options.map(function (region) {create_dropdown_option(region, dropdown)})
