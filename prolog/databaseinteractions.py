@@ -1,52 +1,51 @@
 # pip install pyswip
 from pyswip import Prolog, Functor, Variable, Query
 
-'''
-This function should be called once on program startup, to initialize variables used across
-other library functions.
-'''
-def InitializeProlog(databasePath = "data/database.pl"):
-    # Create prolog object for consulting database
-    prolog = Prolog()
-    # Consult database
-    prolog.consult(databasePath)
-
-    # Prepare statement names
-    question = Functor("question", 2)
-    options = Functor("options", 4)
-    answer = Functor("answer", 2)
-
-    # Set up output variables for Prolog
-    out1 = Variable()
-    out2 = Variable()
-    out3 = Variable()
-    Y = Variable()
+# from databaseinteractions import GetQuestionAndOptions, GetAnswer
 
 '''
 This function queries the prolog database and returns both a question and its options
 '''
-def GetQuestionAndOptions(questionNumber):
-    question = ""
-    options = []
+def GetQuestionAndOptions(questionNumber, databasePath = "data/database.pl"):
+
+    prolog = Prolog()
+    # Consult database
+    prolog.consult(databasePath)
+
+    question = Functor("question", 2)
+    options = Functor("options", 4)
+    out1 = Variable()
+    out2 = Variable()
+    out3 = Variable()
+
+    questionOut = ""
+    optionsOut = []
 
     query = Query(question(questionNumber, out1))
-    if(query.nextSolution()):
-        question = out1.value
+    while(query.nextSolution()):
+        questionOut = str(out1.value)
     query.closeQuery()
 
     query = Query(options(questionNumber, out1, out2, out3))
-    if(query.nextSolution()):
-        options = [out1.value, out2.value, out3.value]
+    while(query.nextSolution()):
+        optionsOut = [str(out1.value), str(out2.value), str(out3.value)]
     query.closeQuery()
 
-    return [question, options] # ['What color is the sky', ['Blue', 'Red', 'Green']]
+    return [questionOut, optionsOut] # ['What color is the sky', ['Blue', 'Red', 'Green']]
 
 '''
 This function returns the one-letter answer to the question number provided to its argument
 '''
-def GetAnswer(questionNumber):
+def GetAnswer(questionNumber, databasePath = "data/database.pl"):
+    prolog = Prolog()
+    # Consult database
+    prolog.consult(databasePath)
+
+    answer = Functor("answer", 2)
+    out1 = Variable()
+
     returnValue = ""
-    query = Query(answer(number, out1))
+    query = Query(answer(questionNumber, out1))
     if(query.nextSolution()):
         returnValue = out1.value
     query.closeQuery()
@@ -55,7 +54,18 @@ def GetAnswer(questionNumber):
 '''
 This funtion prints all question and answer information in the prolog database to the console.
 '''
-def PrintAllInformation():
+def PrintAllInformation(databasePath = "data/database.pl"):
+    prolog = Prolog()
+    # Consult database
+    prolog.consult(databasePath)
+
+    question = Functor("question", 2)
+    options = Functor("options", 4)
+    answer = Functor("answer", 2)
+    out1 = Variable()
+    out2 = Variable()
+    out3 = Variable()
+    Y = Variable()
     # Gather all the questions into a list
     questionsOut = []
     query = Query(question(Y, out1))
@@ -82,3 +92,7 @@ def PrintAllInformation():
         print(questionsOut[i],"\n")
         for option in optionsOut[i]:
             print("\t", option,"\n")
+
+# print(GetQuestionAndOptions(1))
+# print(GetAnswer(1))
+# PrintAllInformation()
