@@ -1,103 +1,59 @@
-# pip install pyswip
 from pyswip import Prolog, Functor, Variable, Query
 
-# from databaseinteractions import GetQuestionAndOptions, GetAnswer
 
-'''
-This function queries the prolog database and returns both a question and its options
-'''
-def GetQuestionAndOptions(questionNumber, databasePath="data/database.pl"):
+def getDBInfo(questionNumber):
+    ''' This function queries the prolog database and returns database info
+    on passed in question number
 
-    prolog = Prolog()
-    # Consult database
-    prolog.consult(databasePath)
+    @param questionNumber: int of the question number in the .pl file. starts @ 1
 
+    returns list of:
+                    -element1: str of question
+                    -element2: list of strs containing question options
+                    -element3: str of correct answer
+    '''
+    # NOTE: int arg is for how many args are to the right of the db obj
+    answer = Functor("answer", 2)
     question = Functor("question", 2)
     options = Functor("options", 4)
+
+    # Declare all variables we're going to use to store prolog info
     out1 = Variable()
     out2 = Variable()
     out3 = Variable()
 
+    # Set default values for containing str version of query return
     questionOut = ""
     optionsOut = []
+    answerOut = ""
 
+    # Find corresponding question to questionNumber passed in
     query = Query(question(questionNumber, out1))
     while(query.nextSolution()):
         questionOut = str(out1.value)
     query.closeQuery()
 
+    # Find corresponding question options to questionNumber passed in
     query = Query(options(questionNumber, out1, out2, out3))
     while(query.nextSolution()):
         optionsOut = [str(out1.value), str(out2.value), str(out3.value)]
     query.closeQuery()
 
-    return [questionOut, optionsOut] # ['What color is the sky', ['Blue', 'Red', 'Green']]
-
-'''
-This function returns the one-letter answer to the question number provided to its argument
-'''
-def GetAnswer(questionNumber, databasePath="data/database.pl"):
-    prolog = Prolog()
-    # Consult database
-    prolog.consult(databasePath)
-
-    answer = Functor("answer", 2)
-    out1 = Variable()
-
-    returnValue = ""
+    # Find corresponding answer to questionNumber passed in
     query = Query(answer(questionNumber, out1))
-    if(query.nextSolution()):
-        returnValue = str(out1.value)
-    query.closeQuery()
-    return returnValue
-
-'''
-This funtion prints all question and answer information in the prolog database to the console.
-'''
-def PrintAllInformation(databasePath="data/database.pl"):
-    prolog = Prolog()
-    # Consult database
-    prolog.consult(databasePath)
-
-    question = Functor("question", 2)
-    options = Functor("options", 4)
-    answer = Functor("answer", 2)
-    out1 = Variable()
-    out2 = Variable()
-    out3 = Variable()
-    Y = Variable()
-    # Gather all the questions into a list
-    questionsOut = []
-    query = Query(question(Y, out1))
-    while query.nextSolution():
-        questionsOut.append(out1.value)
+    while(query.nextSolution()):
+        answerOut = str(out1.value)
     query.closeQuery()
 
-    # Gather all the options into a list
-    optionsOut = []
-    query = Query(options(Y, out1, out2, out3))
-    while query.nextSolution():
-        optionsOut.append([out1.value, out2.value, out3.value])
-    query.closeQuery()
-
-    # Gather all the answers into a list
-    answersOut = []
-    query = Query(answer(Y, out1))
-    while query.nextSolution():
-        answersOut.append(out1.value)
-    query.closeQuery()
-
-    #interact with data
-    for i in range(0,len(questionsOut)):
-        print(questionsOut[i],"\n")
-        for option in optionsOut[i]:
-            print("\t", option,"\n")
+    # Follows format: ['What color is the sky', ['Blue', 'Red', 'Green'], answer]
+    return [questionOut, optionsOut, answerOut]
 
 
 def main():
-    print(GetQuestionAndOptions(1))
-    print(GetAnswer(1))
-    # PrintAllInformation()
+    PROLOG_PATH = 'data/database.pl'
+    PROLOG_OBJ = Prolog()
+    PROLOG_OBJ.consult(PROLOG_PATH)
+    print(getDBInfo(1))
 
 if __name__ == '__main__':
     main()
