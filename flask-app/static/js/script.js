@@ -5,59 +5,92 @@ function date_string() {
 	return today.toDateString()
 }
 
-function get_cdc_data() {
-	let request = new XMLHttpRequest()
+/*
+ * Downloads the file at the given URL.
+ */
+function get_file(url) {
+	const request = new XMLHttpRequest()
 	// This throws a warning about synchronous requests being deprecated
-	request.open('GET','https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_DATA.csv',false)
+	request.open('GET',url,false)
 	request.send()
 	return request.responseText
 }
 
-function parse_csv(csv_str) {
-	let rows = csv_str.split("\r\n").slice(3)
-	return rows.map(function (row) {return row.split(",")})
+/*
+ * Splits the CSV string grabbed from the CDC website into a list of lists. The
+ * drop argument will drop the first n rows from the return value.
+ */
+function parse_csv(csv_str, drop=3) {
+	const rows = csv_str.split("\r\n").slice(drop)
+	return rows.map((row) => row.split(","))
 }
 
+/*
+ * Adds name as an option to the given dropdown element.
+ */
 function create_dropdown_option(name, dropdown) {
-	let el = document.createElement("option")
+	const el = document.createElement("option")
 	el.textContent = name
 	el.value = name
 	dropdown.appendChild(el)
 }
 
+/*
+ * Returns the region currently selected in the dropdown menu.
+ */
 function get_selected_region() {
-	let dropdown = document.getElementById("region")
+	const dropdown = document.getElementById("region")
 	return dropdown.options[dropdown.selectedIndex].value
 }
 
-function get_facts(region, csv) {
-	if (csv[0][2] === region) {
-		return csv[0].slice(3)
-	} else {
-		return get_facts(region, csv.slice(1))
-	}
+function update_fact(id, text) {
+	document.getElementById(id).innerText = text
 }
 
-function update_facts(csv) {
-	let region = get_selected_region()
-	let facts = get_facts(region, csv)
+function update_case_facts(csv) {
+	const region = get_selected_region()
+	const region_row = csv.filter((x) => {if (x[2] === region) {return true}})[0]
+	const facts = region_row.slice(3)
 
-	let total_cases = facts[0]
-	let total_deaths = facts[1]
-	let deaths_per_100k = facts[2]
-	let cases_7_days = facts[3]
-	let cases_per_100k = facts[4]
+	const total_cases = facts[0]
+	const total_deaths = facts[1]
+	const deaths_per_100k = facts[2]
+	const cases_7_days = facts[3]
+	const cases_per_100k = facts[4]
 
-	document.getElementById('fact-1').innerText = "Since the start of the pandemic, there have been " + total_cases + " COVID-19 cases in " + region + ". " + total_deaths + " people have died from the disease."
-	document.getElementById('fact-2').innerText = "This means for every 100,000 people in " + region + ", " + cases_per_100k + " people have caught COVID-19, and " + deaths_per_100k + " have died."
-	document.getElementById('fact-3').innerText = "In the last 7 days alone, there have been " + cases_7_days + " cases in " + region + "."
+	update_fact('fact-1', "Since the start of the pandemic, there have been " + total_cases + " COVID-19 cases in " + region + ". " + total_deaths + " people have died from the disease.")
+	update_fact('fact-2', "This means for every 100,000 people in " + region + ", " + cases_per_100k + " people have caught COVID-19, and " + deaths_per_100k + " have died.")
+	update_fact('fact-3', "In the last 7 days alone, there have been " + cases_7_days + " cases in " + region + ".")
+}
+
+function update_test_facts(json) {
+	const region = get_selected_region()
+	const facts = json.filter((x) => {if (x['name'] === region) {return true}})[0]
+
+	const tests_performed = facts['cumulative_tests_performed']
+	const percent_positive = facts['percent_positive_range']
+
+	if (tests_performed === null && percent_positive !== null) {
+		const out = "Unfortunately, this site does not have any data on the COVID-19 tests performed in " + region + "."
+		update_fact('fact-4', out)
+	} else if (tests_performed === null) {
+		const out = percent_positive + " of the COVID-19 tests performed in " + region + " have come back positive."
+		update_fact('fact-4', out)
+	} else {
+		const out = tests_performed + " COVID-19 tests have been performed in " + region + ". " + percent_positive + " of those tests have come back positive."
+		update_fact('fact-4', out)
+	}
 }
 
 document.getElementById('facts-date').innerText += " " + date_string()
 
-let cdc_data = get_cdc_data()
-let cdc_data_csv = parse_csv(cdc_data)
+const case_data = get_file('https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_DATA.csv')
+const case_data_csv = parse_csv(case_data)
 
-let dropdown = document.getElementById("region")
-let options = cdc_data_csv.map(function (x) {return x[2]})
-options.map(function (region) {create_dropdown_option(region, dropdown)})
+const test_data = get_file('https://www.cdc.gov/covid-data-tracker/Content/CoronaViewJson_01/US_MAP_TESTING.json')
+const test_data_json = JSON.parse(test_data)['US_MAP_TESTING']
+
+// Populate the dropdown menu with all the regions provided by the case CSV
+const dropdown = document.getElementById("region")
+const options = case_data_csv.map((x) => x[2])
+options.map((region) => create_dropdown_option(region, dropdown))
