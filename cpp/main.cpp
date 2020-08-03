@@ -1,7 +1,10 @@
 #include <iostream>
+#include <fstream>
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <cpprest/json.h>
+#include <map>
+#include <string>
 
 using namespace std;
 using namespace utility;
@@ -10,6 +13,84 @@ using namespace web::http;
 using namespace web::http::client;
 using namespace cuncurrency::streams;
 using namespace web::json;
+
+class Stats {
+public:
+	map<int, string[]> results;
+	map<int, int[]> data;
+
+	Stats(map<int, bool> dict) {
+		results = dict;
+	}
+
+	void AddData() {
+		RetrieveData();
+		fstream statsFile("statsfile.txt");
+		string newData;
+		int[] questionData;
+		//Add results from user to stats file
+		for (int i = 1; i <= data.size(); i++) {
+			questionData = data.at(i);
+			//Increment either correct or incorrect depending on user's results
+			if (results.at(i) == "True") {
+				questionData[0]++;
+			}
+			else {
+				questionData[1]++;
+			}
+			statsFile << to_string(i) << ": Correct- " << to_string(questionData[0]) << " Incorrect- " << to_string(questionData[1]) << "\n";
+		}
+
+		//Add results from user to stats file
+		while (getline(statsFile, l)) {
+			int numQuestion, numCorrect, numIncorrect;
+			int pos1, pos2;
+
+			pos2 = l.find(":");
+			numQuestion = stoi(l.substr(0, pos2));
+			pos1 = l.find("Correct") + 9;
+			pos2 = l.find("Incorrect") - 1;
+			numCorrect = stoi(l.substr(pos1, pos2));
+			pos1 = l.find("Incorrect") + 11;
+			numIncorrect = stoi(l.substr(pos1));
+
+			data.insert(pair<int, int[]>(numQuestion, [numCorrect, numIncorrect]));
+		}
+		statsFile.close();
+	}
+
+	void CreateStatsDB(int numQs) {
+		fstream statsFile("statsfile.txt");
+		// Add correct and incorrect counts for each question
+		for (int i = 1; i <= numQs; i++) {
+			statsFile << to_string(i) << ": Correct- 0 Incorrect- 0\n";
+		}
+		statsFile.close();
+	}
+
+	void RetrieveData() {
+		fstream statsFile("statsfile.txt");
+		data.clear();
+		//Go through each line in stats file and store data in map
+		while (getline(statsFile, l)) {
+			int numQuestion, numCorrect, numIncorrect;
+			int pos1, pos2;
+
+			pos2 = l.find(":");
+			numQuestion = stoi(l.substr(0,pos2));
+			pos1 = l.find("Correct") + 9;
+			pos2 = l.find("Incorrect") - 1;
+			numCorrect = stoi(l.substr(pos1, pos2));
+			pos1 = l.find("Incorrect") + 11;
+			numIncorrect = stoi(l.substr(pos1));
+			
+			data.insert(pair<int, int[]>(numQuestion, [numCorrect, numIncorrect]));
+		}
+		statsFile.close();
+	}
+private:
+
+};
 
 int main()
 {
