@@ -1,0 +1,12 @@
+<h1>Whattaya Know: COVID</h1>
+<form action='/quiz' method='POST'>
+    <ol>
+        {% for i in questions %}
+            <li>Question <u>{{i}}</li>
+            {% for j in answer_options[i] %}
+                <input type='radio' value='{{j}}' name='{{i}}' />{{j}}
+            {% endfor %}
+        {% endfor %}
+    </ol>
+    <input type="submit" value="submit" />
+</form>
