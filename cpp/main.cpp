@@ -17,7 +17,7 @@ using namespace std;
 class Stats {
 public:
 	map<int, bool> results;
-	map<int, int[]> data;
+	map<int, int*> data;
 
 	Stats(map<int, bool> dict) {
 		results = dict;
@@ -30,7 +30,7 @@ public:
 		int questionData;
 		//int questionData[2];
 		//pair<int, int[2]> questionData;
-		map<int, int[]>::iterator iter;
+		map<int, int*>::iterator iter;
 		//Add results from user to stats file
 		for (int i = 1; i <= data.size(); i++) {
 			iter = data.find(i);
@@ -49,7 +49,7 @@ public:
 		//Add results from user to stats file
 		string l;
 		while (getline(statsFile, l)) {
-			string numQuestion, numCorrect, numIncorrect;
+			int numQuestion, numCorrect, numIncorrect;
 			int pos1, pos2;
 
 			pos2 = l.find(":");
@@ -60,7 +60,8 @@ public:
 			pos1 = l.find("Incorrect") + 11;
 			numIncorrect = stoi(l.substr(pos1));
 
-			data[numQuestion] = [numCorrect, numIncorrect];
+			int values[] = { numCorrect, numIncorrect };
+			data[numQuestion] = values;
 		}
 		statsFile.close();
 	}
@@ -92,7 +93,9 @@ public:
 			pos1 = l.find("Incorrect") + 11;
 			numIncorrect = stoi(l.substr(pos1));
 
-			data.insert(pair<int, int[]>(numQuestion, [numCorrect, numIncorrect]));
+			cout << numQuestion << ": " << numCorrect << " " << numIncorrect << endl;
+			int values[] = { numCorrect, numIncorrect };
+			data[numQuestion] = values;
 		}
 		statsFile.close();
 	}
@@ -108,8 +111,13 @@ int main()
 	exResults[3] = true;
 
 	Stats example(exResults);
-	example.CreateStatsDB();
+	//example.CreateStatsDB();
+	example.RetrieveData();
 
+	for (auto elem : example.data)
+	{
+		cout << elem.first << ": " << elem.second << " " << endl;
+	}
 
 
 	/*
