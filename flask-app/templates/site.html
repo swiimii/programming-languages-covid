@@ -4,6 +4,7 @@
 	<head>
 		<title>COVID-19 Information</title>
 		<meta charset="utf-8">
+		<link rel="stylesheet" href="../static/css/style.css">
 	</head>
 	<body>
 		<h1>COVID-19 Information</h1>
@@ -18,33 +19,36 @@
 		</p>
 
 		<h2>Facts and Sources</h2>
-		<p> Symptoms include:
-				Fever or chills
-				Cough
-				Shortness of breath or difficulty breathing
-				Fatigue
-				Muscle or body aches
-				Headache
-				New loss of taste or smell
-				Sore throat
-				Congestion or runny nose
-				Nausea or vomiting
-				Diarrhea
-			Severe Symptoms Include:
-				Trouble breathing
-				Persistent pain or pressure in the chest
-				New confusion
-				Inability to wake or stay awake
-				Bluish lips or face
-		</p>
+		<p>Symptoms include:</p>
+		<ul style="font-size: 20px;">
+			<li>Fever or chills</li>
+			<li>Shortness of breath or difficulty breathing</li>
+			<li>Fatigue</li>
+			<li>Muscle or body aches</li>
+			<li>Headache</li>
+			<li>New loss of taste or smell</li>
+			<li>Sore throat</li>
+			<li>Congestion or runny nose</li>
+			<li>Nausea or vomiting</li>
+			<li>Diarrhea</li>
+		</ul>
+		<p>Severe Symptoms Include:</p>
+		<ul style="font-size: 20px;">
+			<li>Trouble breathing</li>
+			<li>Persistent pain or pressure in the chest</li>
+			<li>New confusion</li>
+			<li>Inability to wake or stay awake</li>
+			<li>Bluish lips or face</li>
+			
+		</ul>
 		<p id="facts-date">These facts are relevant to your region and up to date as of </p>
-		<label for="region">Select your region</label>
-		<select name="region" id="region"
+		<label style="font-size: 20px;" for="region">Select your region</label>
+		<select style="font-size: 20px;" name="region" id="region"
 			onchange="update_case_facts(case_data_csv);
 			update_test_facts(test_data_json);">
 			<!--This gets filled by JS-->
 		</select>
-		<ul>
+		<ul style="font-size: 20px;">
 			<li id="fact-1">Fact 1</li>
 			<li id="fact-2">Fact 2</li>
 			<li id="fact-3">Fact 3</li>
@@ -52,7 +56,7 @@
 		</ul>
 
 		<h2>COVID-19 Quiz</h2>
-		<a href="http://127.0.0.1:5000/quiz">Take a Quiz!</a>
+		<a style="font-size: 70px;" href="http://127.0.0.1:5000/quiz">Take a Quiz!</a>
 
 		<script type=text/javascript src="{{url_for('static', filename='js/script.js') }}"></script>
 
