@@ -1,6 +1,7 @@
 import datetime
 from flask import Flask, render_template, request
 from pyswip import Prolog
+from subprocess import run
 
 from prolog.databaseinteractions import getDBInfo
 
@@ -88,7 +89,17 @@ def quiz_answers():
             post_dict[str(i+1)] = False
 
     # They've filled everything out, so lets send off the form dict to C++ for cookin
-    return '<h1>Answers: <u>'+str(post_dict)+'</u></h1>'
+    # run("cpp/main.cpp");
+    statsFile = open("cpp/statsfile.txt", "r")
+    stats = statsFile.readlines()
+    statsFormatted = "<h1>Answers:</h1>"
+    for i in range(len(stats)):
+        if i % 2 == 0:
+            statsFormatted += "<h2>" + stats[i] + "</h2>"
+        else:
+            statsFormatted += "<p>" + stats[i] + "</p>"
+    return statsFormatted
+    # return '<h1>Answers: <u>'+str(post_dict)+'</u></h1>'
 
 if __name__ == '__main__':
     app.run(debug=True)
