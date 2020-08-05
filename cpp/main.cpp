@@ -1,27 +1,18 @@
 #include <iostream>
 #include <fstream>
-//#include <cpprestsdk/http_client.h>
-//#include <cpprestsdk/filestream.h>
-//#include <cpprestsdk/json.h>
 #include <map>
 #include <string>
 
 using namespace std;
-//using namespace utility;
-//using namespace web;
-//using namespace web::http;
-//using namespace web::http::client;
-//using namespace cuncurrency::streams;
-//using namespace web::json;
 
 class Stats {
 public:
 	map<int, bool> results;
 	map<string, int> data;
+	map<string, int> calculatedData;
 
 	Stats(map<int, bool> dict) {
 		results = dict;
-		//data = &dataMap;
 	}
 
 	void AddData() {
@@ -29,8 +20,7 @@ public:
 		string key;
 		int value, questionNum;
 		//Update data in map
-		for (auto elem : data)
-		{
+		for (auto elem : data) {
 			key = elem.first;
 			value = elem.second;
 			if (key.find("Correct") != -1) {
@@ -46,25 +36,42 @@ public:
 				}
 			}
 		}
+		UpdateStats();
+		RetrieveData();
+	}
+
+	void CalculateStats() {
+		// Calculate percentages
+		double doubleVal;
+		int calcVal;
+		for (int i = 1; i <= 3; i++) {
+			doubleVal = static_cast<double>(data["Correct" + to_string(i)]) / data["Total" + to_string(i)];
+			calcVal = static_cast<int>(doubleVal * 100);
+			calculatedData["%Correct" + to_string(i)] = calcVal;
+
+			doubleVal = static_cast<double>(data["Incorrect" + to_string(i)]) / data["Total" + to_string(i)];
+			calcVal = static_cast<int>(doubleVal * 100);
+			calculatedData["%Incorrect" + to_string(i)] = calcVal;
+		}
 	}
 
 	void CreateStatsDB() {
-		fstream statsFile;
-		statsFile.open("statsfile.txt", ios::out);
+		fstream dataFile;
+		dataFile.open("datafile.txt", ios::out);
 		// Add correct and incorrect counts for each question
 		for (int i = 1; i <= results.size(); i++) {
-			statsFile << to_string(i) << ": Correct- 0 Incorrect- 0\n";
+			dataFile << to_string(i) << ": Correct- 0 Incorrect- 0\n";
 		}
-		statsFile.close();
+		dataFile.close();
 	}
 
 	void RetrieveData() {
-		fstream statsFile("statsfile.txt");
+		fstream dataFile("datafile.txt");
 		data.clear();
 		//Go through each line in stats file and store data in map
-		string l, str1, str2;
+		string l, str1, str2, str3;
 		int numQuestion, numCorrect, numIncorrect, pos1, pos2;
-		while (getline(statsFile, l)) {
+		while (getline(dataFile, l)) {
 			pos2 = l.find(":");
 			numQuestion = stoi(l.substr(0, pos2));
 			pos1 = l.find("Correct") + 9;
@@ -75,22 +82,44 @@ public:
 
 			str1 = "Correct" + to_string(numQuestion);
 			str2 = "Incorrect" + to_string(numQuestion);
+			str3 = "Total" + to_string(numQuestion);
 			data.insert(pair<string, int>(str1, numCorrect));
 			data.insert(pair<string, int>(str2, numIncorrect));
+			data.insert(pair<string, int>(str3, numIncorrect + numCorrect));
+		}
+		dataFile.close();
+	}
+
+	void SendData() {
+		CalculateStats();
+		fstream statsFile;
+		statsFile.open("statsfile.txt", ios::out);
+		// Add correct and incorrect counts for each question
+		for (int i = 1; i <= results.size(); i++) {
+			statsFile << "Question " << to_string(i) << ": ";
+			if (results[i]) {
+				statsFile << "Correct.\n";
+			}
+			else {
+				statsFile << "Incorrect.\n";
+			}
+			statsFile << "Out of the " << data["Total" + to_string(i)] << " people who answered this question, ";
+			statsFile << calculatedData["%Correct" + to_string(i)] << "% answered this question correctly and ";
+			statsFile << calculatedData["%Incorrect" + to_string(i)] << "% answered this question incorrectly.\n";
 		}
 		statsFile.close();
 	}
 
 	void UpdateStats() {
-		fstream statsFile;
-		statsFile.open("statsfile.txt", ios::out);
+		fstream dataFile;
+		dataFile.open("datafile.txt", ios::out);
 		// Add correct and incorrect counts for each question
 		for (int i = 1; i <= results.size(); i++) {
-			statsFile << to_string(i) << ": ";
-			statsFile << "Correct- " << data["Correct" + to_string(i)];
-			statsFile << " Incorrect- " << data["Incorrect" + to_string(i)] << "\n";
+			dataFile << to_string(i) << ": ";
+			dataFile << "Correct- " << data["Correct" + to_string(i)];
+			dataFile << " Incorrect- " << data["Incorrect" + to_string(i)] << "\n";
 		}
-		statsFile.close();
+		dataFile.close();
 	}
 private:
 
@@ -104,60 +133,9 @@ int main()
 	exResults[3] = true;
 
 	Stats example(exResults);
-	example.CreateStatsDB();
+	//example.CreateStatsDB();
 	example.AddData();
-	example.UpdateStats();
+	example.SendData();
 
-
-	/*for (auto elem : example.data)
-	{
-		cout << elem.first << ": " << elem.second << endl;
-	}*/
-
-
-	/*
-	// HTTP request and saving results tutorial
-
-	auto fileStream = std::make_shared<ostream>();
-
-	// Open stream to output file.
-	pplx::task<void> requestTask = fstream::open_ostream(U("results.html")).then([=](ostream outFile)
-		{
-			*fileStream = outFile;
-
-			// Create http_client to send the request.
-			http_client client(U("http://www.bing.com/"));
-
-			// Build request URI and start the request.
-			uri_builder builder(U("/search"));
-			builder.append_query(U("q"), U("cpprestsdk github"));
-			return client.request(methods::GET, builder.to_string());
-		});
-
-	// Handle response headers arriving.
-	.then([=](http_response response)
-		{
-			printf("Received response status code:%u\n", response.status_code());
-
-			// Write response body into the file.
-			return response.body().read_to_end(fileStream->streambuf());
-		});
-
-	// Close the file stream.
-	.then([=](size_t)
-		{
-			return fileStream->close();
-		});
-
-	// Wait for all the outstanding I/O to complete and handle any exceptions
-	try
-	{
-		requestTask.wait();
-	}
-	catch (const std::exception & e)
-	{
-		printf("Error exception:%s\n", e.what());
-	}
-	*/
 	return 0;
 }
