@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
-//#include <cpprest/http_client.h>
-//#include <cpprest/filestream.h>
-//#include <cpprest/json.h>
+//#include <cpprestsdk/http_client.h>
+//#include <cpprestsdk/filestream.h>
+//#include <cpprestsdk/json.h>
 #include <map>
 #include <string>
 
@@ -17,53 +17,35 @@ using namespace std;
 class Stats {
 public:
 	map<int, bool> results;
-	map<int, int*> data;
+	map<string, int> data;
 
 	Stats(map<int, bool> dict) {
 		results = dict;
+		//data = &dataMap;
 	}
 
 	void AddData() {
 		RetrieveData();
-		fstream statsFile("statsfile.txt");
-		string newData;
-		int questionData;
-		//int questionData[2];
-		//pair<int, int[2]> questionData;
-		map<int, int*>::iterator iter;
-		//Add results from user to stats file
-		for (int i = 1; i <= data.size(); i++) {
-			iter = data.find(i);
-			questionData = *data[i];
-			//Increment either correct or incorrect depending on user's results
-			/*if (results[i]) {
-				questionData[0]++;
+		string key;
+		int value, questionNum;
+		//Update data in map
+		for (auto elem : data)
+		{
+			key = elem.first;
+			value = elem.second;
+			if (key.find("Correct") != -1) {
+				questionNum = stoi(key.substr(7));
+				if (results[questionNum]) {
+					data[key] = value + 1;
+				}
 			}
-			else {
-				questionData[1]++;
-			}*/
-			//statsFile << to_string(i) << ": Correct- " << to_string(questionData[0]) << " Incorrect- " << to_string(questionData[1]) << "\n";
-			cout << questionData << endl;
+			else if (key.find("Incorrect") != -1) {
+				questionNum = stoi(key.substr(9));
+				if (!results[questionNum]) {
+					data[key] = value + 1;
+				}
+			}
 		}
-
-		//Add results from user to stats file
-		string l;
-		while (getline(statsFile, l)) {
-			int numQuestion, numCorrect, numIncorrect;
-			int pos1, pos2;
-
-			pos2 = l.find(":");
-			numQuestion = stoi(l.substr(0, pos2));
-			pos1 = l.find("Correct") + 9;
-			pos2 = l.find("Incorrect") - 1;
-			numCorrect = stoi(l.substr(pos1, pos2));
-			pos1 = l.find("Incorrect") + 11;
-			numIncorrect = stoi(l.substr(pos1));
-
-			int values[] = { numCorrect, numIncorrect };
-			data[numQuestion] = values;
-		}
-		statsFile.close();
 	}
 
 	void CreateStatsDB() {
@@ -80,11 +62,9 @@ public:
 		fstream statsFile("statsfile.txt");
 		data.clear();
 		//Go through each line in stats file and store data in map
-		string l;
+		string l, str1, str2;
+		int numQuestion, numCorrect, numIncorrect, pos1, pos2;
 		while (getline(statsFile, l)) {
-			int numQuestion, numCorrect, numIncorrect;
-			int pos1, pos2;
-
 			pos2 = l.find(":");
 			numQuestion = stoi(l.substr(0, pos2));
 			pos1 = l.find("Correct") + 9;
@@ -93,9 +73,22 @@ public:
 			pos1 = l.find("Incorrect") + 11;
 			numIncorrect = stoi(l.substr(pos1));
 
-			cout << numQuestion << ": " << numCorrect << " " << numIncorrect << endl;
-			int values[] = { numCorrect, numIncorrect };
-			data[numQuestion] = values;
+			str1 = "Correct" + to_string(numQuestion);
+			str2 = "Incorrect" + to_string(numQuestion);
+			data.insert(pair<string, int>(str1, numCorrect));
+			data.insert(pair<string, int>(str2, numIncorrect));
+		}
+		statsFile.close();
+	}
+
+	void UpdateStats() {
+		fstream statsFile;
+		statsFile.open("statsfile.txt", ios::out);
+		// Add correct and incorrect counts for each question
+		for (int i = 1; i <= results.size(); i++) {
+			statsFile << to_string(i) << ": ";
+			statsFile << "Correct- " << data["Correct" + to_string(i)];
+			statsFile << " Incorrect- " << data["Incorrect" + to_string(i)] << "\n";
 		}
 		statsFile.close();
 	}
@@ -111,13 +104,15 @@ int main()
 	exResults[3] = true;
 
 	Stats example(exResults);
-	//example.CreateStatsDB();
-	example.RetrieveData();
+	example.CreateStatsDB();
+	example.AddData();
+	example.UpdateStats();
 
-	for (auto elem : example.data)
+
+	/*for (auto elem : example.data)
 	{
-		cout << elem.first << ": " << elem.second << " " << endl;
-	}
+		cout << elem.first << ": " << elem.second << endl;
+	}*/
 
 
 	/*
