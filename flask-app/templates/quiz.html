@@ -2,7 +2,8 @@
 <form action='/quiz' method='POST'>
     <ol>
         {% for i in questions %}
-            <li>Question <u>{{i}}</li>
+        <p></p>
+            <li>Question: <u>{{i}}</li>
             {% for j in answer_options[i] %}
                 <input type='radio' value='{{j}}' name='{{i}}' />{{j}}
             {% endfor %}
