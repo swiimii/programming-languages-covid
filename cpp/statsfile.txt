@@ -1,0 +1,6 @@
+Question 1: Correct.
+Out of the 17 people who answered this question, 58% answered this question correctly and 41% answered this question incorrectly.
+Question 2: Incorrect.
+Out of the 17 people who answered this question, 29% answered this question correctly and 70% answered this question incorrectly.
+Question 3: Correct.
+Out of the 17 people who answered this question, 76% answered this question correctly and 23% answered this question incorrectly.
