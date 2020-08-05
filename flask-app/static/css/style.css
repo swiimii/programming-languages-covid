@@ -1,0 +1,23 @@
+body {
+    background-color: rgb(0, 191, 255);
+  }
+  
+  h1 {
+    color: rgb(89, 0, 255);
+    text-align: center;
+  }
+  
+  p {
+    font-family: verdana;
+    font-size: 20px;
+  }
+  ul 
+  {
+    font-family: verdana;
+    font-size: 20px;
+  }
+  .bigfont li {
+    font-family: verdana;
+    font-size: 40px;
+  }
+

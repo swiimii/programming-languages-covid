@@ -1,8 +1,13 @@
+<head>
+    <title>COVID-19 Quiz</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
 <h1>Whattaya Know: COVID</h1>
-<form action='/quiz' method='POST'>
-    <ol>
+<form action='/quiz' method='POST' style = "font-size: 40px;">
+    <ol >
         {% for i in questions %}
-            <li>Question <u>{{i}}</li>
+            <li><u>{{i}}</u></li>
             {% for j in answer_options[i] %}
                 <input type='radio' value='{{j}}' name='{{i}}' />{{j}}
             {% endfor %}
