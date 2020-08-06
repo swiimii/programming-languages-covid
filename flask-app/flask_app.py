@@ -91,14 +91,14 @@ def quiz_answers():
     # They've filled everything out, so lets send off the form dict to C++ for cookin
     # run("cpp/main.cpp");
     statsFile = open("cpp/statsfile.txt", "r")
-    stats = statsFile.readlines()
-    statsFormatted = "<h1>Answers:</h1>"
-    for i in range(len(stats)):
-        if i % 2 == 0:
-            statsFormatted += "<h2>" + stats[i] + "</h2>"
-        else:
-            statsFormatted += "<p>" + stats[i] + "</p>"
-    return statsFormatted
+    statsList = statsFile.readlines()
+    # statsFormatted = "<h1>Answers:</h1>"
+    # for i in range(len(stats)):
+    #    if i % 2 == 0:
+    #        statsFormatted += "<h2>" + stats[i] + "</h2>"
+    #    else:
+    #        statsFormatted += "<p>" + stats[i] + "</p>"
+    return render_template('results.html', stats = statsList, len = len(statsList))
     # return '<h1>Answers: <u>'+str(post_dict)+'</u></h1>'
 
 if __name__ == '__main__':

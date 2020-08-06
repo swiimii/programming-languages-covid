@@ -98,10 +98,10 @@ public:
 		for (int i = 1; i <= results.size(); i++) {
 			statsFile << "Question " << to_string(i) << ": ";
 			if (results[i]) {
-				statsFile << "Correct.\n";
+				statsFile << "Correct\n";
 			}
 			else {
-				statsFile << "Incorrect.\n";
+				statsFile << "Incorrect\n";
 			}
 			statsFile << "Out of the " << data["Total" + to_string(i)] << " people who answered this question, ";
 			statsFile << calculatedData["%Correct" + to_string(i)] << "% answered this question correctly and ";
